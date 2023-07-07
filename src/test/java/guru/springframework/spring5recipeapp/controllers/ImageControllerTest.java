@@ -39,7 +39,9 @@ class ImageControllerTest {
     @BeforeEach
     void setUp() {
         controller = new ImageController(recipeService, imageService);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new ControllerExceptionHandler())
+                .build();
     }
 
     @Test
@@ -100,4 +102,13 @@ class ImageControllerTest {
 
         assertEquals(s.getBytes().length, responseBytes.length);
     }
+    @Test
+    void testImageBadRequestException() throws Exception {
+
+        //when(recipeService.getRecipeById(anyLong())).thenThrow(NotFoundException.class);
+        mockMvc.perform(get("/recipe/asd/image"))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("400error"));
+    }
+
 }
